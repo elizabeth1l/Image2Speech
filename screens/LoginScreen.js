@@ -21,18 +21,12 @@ const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const writeUserData = () => {
-    set(ref(db, "users/" + username.toLowerCase()), {
-      email: email,
-    });
-  };
-
   const signUpUser = () => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
         console.log("Signed up account:", user.email);
-        writeUserData(user);
+        // writeUserData(user);
       })
       .catch((error) => alert(error.message));
   };
@@ -45,6 +39,19 @@ const LoginScreen = () => {
       })
       .catch((error) => alert(error.message));
   };
+
+  const navigation = useNavigation();
+
+  // hook that listens for something to be done after rendering
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigation.navigate("TabNavigator", {
+          username: user.email.slice(0, user.email.indexOf("@")),
+        });
+      }
+    });
+  }, []);
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">

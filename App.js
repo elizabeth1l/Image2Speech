@@ -4,6 +4,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import LoginScreen from "./screens/LoginScreen";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import HomeScreen from "./screens/HomeScreen";
+import CameraScreen from "./screens/CameraScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -15,15 +17,20 @@ const TabNavigator = ({ route }) => (
     }}
   >
     <Tab.Screen
-      name="Info"
-      component={InfoScreen}
+      name="Home"
+      children={() => <HomeScreen username={route.params.username} />}
       options={{
-        tgabBarIcon: () => (
-          <MaterialCommunityIcons
-            name="information-outline"
-            color="#6EB0AE"
-            size={30}
-          />
+        tabBarIcon: () => (
+          <MaterialCommunityIcons name="home" color="#5A4AE3" size={30} />
+        ),
+      }}
+    />
+    <Tab.Screen
+      name="Camera"
+      component={CameraScreen}
+      options={{
+        tabBarIcon: () => (
+          <MaterialCommunityIcons name="camera" color="#5A4AE3" size={30} />
         ),
       }}
     />
