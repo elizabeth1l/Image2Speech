@@ -6,6 +6,7 @@ import LoginScreen from "./screens/LoginScreen";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import HomeScreen from "./screens/HomeScreen";
 import CameraScreen from "./screens/CameraScreen";
+import TranslatorScreen from "./screens/TranslatorScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -28,6 +29,15 @@ const TabNavigator = ({ route }) => (
     <Tab.Screen
       name="Camera"
       component={CameraScreen}
+      options={{
+        tabBarIcon: () => (
+          <MaterialCommunityIcons name="camera" color="#5A4AE3" size={30} />
+        ),
+      }}
+    />
+    <Tab.Screen
+      name="Translator"
+      component={TranslatorScreen}
       options={{
         tabBarIcon: () => (
           <MaterialCommunityIcons name="camera" color="#5A4AE3" size={30} />

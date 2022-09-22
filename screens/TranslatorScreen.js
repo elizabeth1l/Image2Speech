@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { signOut } from "firebase/auth";
 import { db } from "../firebase";
 import { ref, onValue } from "firebase/database";
-import TesseractOcr, { LANG_ENGLISH } from "react-native-tesseract-ocr";
+import { createWorker } from "tesseract.js";
 
 const TranslatorScreen = ({ route }) => {
   const [image, setImage] = useState(null);
@@ -33,19 +33,21 @@ const TranslatorScreen = ({ route }) => {
     }
   };
 
+  const worker = createWorker({
+    logger: (m) => {
+      console.log(m);
+    },
+  });
+
   const translatePhoto = async () => {
-    try {
-      const tesseractOptions = {};
-      const recognizedText = await TesseractOcr.recognize(
-        image,
-        LANG_ENGLISH,
-        tesseractOptions
-      );
-      setText(recognizedText);
-    } catch (err) {
-      console.error(err);
-      setText("");
-    }
+    if (imageData) return;
+    await worker.load();
+    await worker.loadLanguage("eng");
+    await worker.initialize("eng");
+    const {
+      data: { text },
+    } = await worker.recognize(image);
+    setText(text);
   };
 
   return (
