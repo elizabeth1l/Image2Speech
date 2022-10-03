@@ -5,16 +5,25 @@ import { useNavigation } from "@react-navigation/native";
 import { signOut } from "firebase/auth";
 import { db } from "../firebase";
 import { ref, onValue } from "firebase/database";
-import { createWorker } from "tesseract.js";
+import * as FileSystem from "expo-file-system";
+import callGoogleVisionAsync from "../googleCloudVision";
 
 const TranslatorScreen = ({ route }) => {
   const [image, setImage] = useState(null);
-  const [text, setText] = useState("");
+  // const [base64, setBase64] = useState(null);
+  const [text, setText] = useState(null);
 
   useEffect(() => {
-    console.log(route.params.imageUri);
-    setImage(route.params.imageUri);
+    setImage(route.params.image);
+    // getBase64();
   }, []);
+
+  // const getBase64 = async () => {
+  //   const base64 = await FileSystem.readAsStringAsync(route.params.imageUri, {
+  //     encoding: "base64",
+  //   });
+  //   setImage(base64);
+  // };
 
   const showPhoto = () => {
     if (image) {
@@ -26,35 +35,23 @@ const TranslatorScreen = ({ route }) => {
             alignSelf: "center",
           }}
           source={{
-            uri: image,
+            uri: route.params.image.uri,
           }}
         />
       );
     }
   };
 
-  const worker = createWorker({
-    logger: (m) => {
-      console.log(m);
-    },
-  });
-
-  const translatePhoto = async () => {
-    if (imageData) return;
-    await worker.load();
-    await worker.loadLanguage("eng");
-    await worker.initialize("eng");
-    const {
-      data: { text },
-    } = await worker.recognize(image);
-    setText(text);
-  };
+  const responseData = callGoogleVisionAsync(image.base64);
 
   return (
     <View>
       <Text style={styles.imageContainer}> {showPhoto()}</Text>
       <TouchableOpacity>
-        <Text onPress={() => translatePhoto()}>Translate</Text>
+        <Text onPress={() => callGoogleVisionAsync(image.base64)}>
+          Translate
+        </Text>
+        <Text>{responseData.text}</Text>
       </TouchableOpacity>
     </View>
   );

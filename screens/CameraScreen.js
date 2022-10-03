@@ -49,6 +49,7 @@ const CameraScreen = (props) => {
               if (cameraRef) {
                 const photo = await cameraRef.takePictureAsync();
                 console.log(photo.uri);
+                navigation.navigate("Translator", { imageUri: photo.uri });
               }
             }}
           >
