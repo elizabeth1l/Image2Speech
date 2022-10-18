@@ -14,11 +14,13 @@ import { db } from "../firebase";
 import { ref, onValue, set } from "firebase/database";
 import * as ImagePicker from "expo-image-picker";
 import callGoogleVisionAsync from "../googleCloudVision";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const HomeScreen = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [image, setImage] = useState(null);
   const [text, setText] = useState("Please add an image");
+  const [isLoading, isLoadingFunc] = useState(true);
 
   const navigation = useNavigation();
   const handleSignOut = () => {
@@ -37,19 +39,18 @@ const HomeScreen = (props) => {
 
     setImage(result);
     const responseData = await callGoogleVisionAsync(result.base64);
-    console.log(responseData.text);
     setText(responseData.text);
+    isLoadingFunc(false);
     // const responseData = await onSubmit(result.base64);
   };
 
   const translate = () => {
     setModalVisible(false);
-    navigation.navigate("Translator", { image: image });
+    navigation.navigate("Translator", { image: image, text: text });
   };
 
   const showPhoto = () => {
     if (image) {
-      console.log(image);
       return (
         <View>
           <Image
@@ -57,7 +58,7 @@ const HomeScreen = (props) => {
             source={{ uri: image.uri }}
           />
           <TouchableOpacity onPress={() => translate()}>
-            <Text>Translate</Text>
+            {isLoading ? <Text>Loading...</Text> : <Text>Translate</Text>}
           </TouchableOpacity>
         </View>
       );
@@ -90,10 +91,17 @@ const HomeScreen = (props) => {
         <Text style={styles.titleFont}>Welcome {props.username}</Text>
       </View>
 
-      <TouchableOpacity onPress={() => setModalVisible(true)}>
-        <Text>Upload from phone</Text>
+      <TouchableOpacity
+        style={styles.uploadButton}
+        onPress={() => setModalVisible(true)}
+      >
+        <Text style={{ color: "white" }}>Upload From Phone</Text>
+        <MaterialCommunityIcons
+          name="file-image-plus-outline"
+          color="white"
+          size={40}
+        />
       </TouchableOpacity>
-      <Text>{text}</Text>
     </View>
   );
 };
@@ -105,8 +113,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     backgroundColor: "#5A4AE3",
     borderRadius: 20,
-    paddingHorizontal: 50,
-    marginTop: 100,
+    paddingHorizontal: 40,
+    marginTop: 90,
   },
   titleFont: {
     color: "white",
@@ -160,5 +168,15 @@ const styles = StyleSheet.create({
   },
   textStyle: {
     color: "gray",
+  },
+  uploadButton: {
+    alignItems: "center",
+    alignSelf: "center",
+    borderColor: "gray",
+    borderWidth: 2,
+    backgroundColor: "gray",
+    width: 200,
+    borderRadius: 10,
+    marginTop: 50,
   },
 });

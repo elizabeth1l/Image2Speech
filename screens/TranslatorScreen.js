@@ -10,20 +10,13 @@ import callGoogleVisionAsync from "../googleCloudVision";
 
 const TranslatorScreen = ({ route }) => {
   const [image, setImage] = useState(null);
-  // const [base64, setBase64] = useState(null);
   const [text, setText] = useState(null);
 
   useEffect(() => {
     setImage(route.params.image);
+    setText(route.params.text);
     // getBase64();
   }, []);
-
-  // const getBase64 = async () => {
-  //   const base64 = await FileSystem.readAsStringAsync(route.params.imageUri, {
-  //     encoding: "base64",
-  //   });
-  //   setImage(base64);
-  // };
 
   const showPhoto = () => {
     if (image) {
@@ -42,17 +35,12 @@ const TranslatorScreen = ({ route }) => {
     }
   };
 
-  const responseData = callGoogleVisionAsync(image.base64);
+  // const responseData = callGoogleVisionAsync(image.base64);
 
   return (
     <View>
       <Text style={styles.imageContainer}> {showPhoto()}</Text>
-      <TouchableOpacity>
-        <Text onPress={() => callGoogleVisionAsync(image.base64)}>
-          Translate
-        </Text>
-        <Text>{responseData.text}</Text>
-      </TouchableOpacity>
+      <Text>{text}</Text>
     </View>
   );
 };
